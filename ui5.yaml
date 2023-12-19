@@ -15,6 +15,9 @@ server:
             - /resources
             - /test-resources
           url: https://ui5.sap.com
+        backend:
+            - path: /odata/v4/peopleservice
+              destination: people_dest
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

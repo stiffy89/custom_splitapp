@@ -1,7 +1,7 @@
-<mvc:View controllerName="ns.splitapp.controller.Main"
+<mvc:View controllerName="ns.splitapp.controller.Detail"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
-    <Page id="detailPage" title="DetailPage">
+    <Page id="detailPage" title="Employee Details">
         <content />
     </Page>
 </mvc:View>

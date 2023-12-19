@@ -1,7 +1,23 @@
-<mvc:View controllerName="ns.splitapp.controller.Main"
+<mvc:View controllerName="ns.splitapp.controller.Master"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
-    <Page id="masterPage" title="MasterPage">
-        <content />
+    <Page id="masterPage" title="Employees">
+        <content>
+            <List
+                id="MasterList"
+                headerText='Names'
+                items="{ path: '/'}"
+
+            >
+                <items>
+                    <StandardListItem 
+                        title="{
+                            path : '/',
+                            formatter : '.titleFormatter'
+                        }"
+                    />
+                </items>
+            </List>
+        </content>
     </Page>
 </mvc:View>
