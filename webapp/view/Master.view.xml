@@ -6,15 +6,21 @@
             <List
                 id="MasterList"
                 headerText='Names'
-                items="{ path: '/'}"
+                mode='SingleSelectMaster'
+                items="{ path: '/payload'}"
+                selectionChange="listItemSelection"
 
             >
                 <items>
                     <StandardListItem 
                         title="{
-                            path : '/',
-                            formatter : '.titleFormatter'
+                            parts : [
+                                'FirstName',
+                                'LastName'
+                            ],
+                            formatter : '.listTitleFormatter'
                         }"
+                        selected="{selected}"
                     />
                 </items>
             </List>

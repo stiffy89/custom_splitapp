@@ -1,7 +1,60 @@
 <mvc:View controllerName="ns.splitapp.controller.Detail"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns:form="sap.ui.layout.form"
+    >
     <Page id="detailPage" title="Employee Details">
-        <content />
+        <content>
+            <uxap:ObjectPageLayout>
+                <uxap:headerTitle>
+                    <uxap:ObjectPageHeader 
+                        objectTitle="{ 
+                            parts:[
+                                '/selectedData/FirstName',
+                                '/selectedData/LastName'
+                            ],
+                            formatter: '.titleFormatter'
+                        }"
+                    >
+                        <uxap:actions>
+                            <Button text='Edit' press='.editUser'/>
+                            <Button text='Delete' press='.deleteUser'/>
+                            <Button text='Create' press='.createUser'/>
+                        </uxap:actions>
+                    </uxap:ObjectPageHeader>
+                </uxap:headerTitle>
+                <uxap:sections>
+                    <uxap:ObjectPageSection 
+                        title="Personal Details"
+                    >
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection>
+                                <uxap:blocks>
+                                    <form:SimpleForm>
+                                        <form:content>
+                                            <Label text="First Name"/>
+                                            <Text text="{/selectedData/FirstName}"/>
+                                            <Label text="Last Name"/>
+                                            <Text text="{/selectedData/LastName}"/>
+                                            <Label text="Height"/>
+                                            <Text text="{
+                                                    path:'/selectedData/HeightCm',
+                                                    formatter:'.heightFormatter'
+                                                }"
+                                            />
+                                            <Label text="Start Date"/>
+                                            <Text text="{/selectedData/StartDateDisp}"/>
+                                            <Label text="End Date"/>
+                                            <Text text="{/selectedData/EndDateDisp}"/>
+                                        </form:content>
+                                    </form:SimpleForm>
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+                </uxap:sections>
+            </uxap:ObjectPageLayout>
+        </content>
     </Page>
 </mvc:View>
