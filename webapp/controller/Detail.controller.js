@@ -16,6 +16,9 @@ sap.ui.define([
             onInit: function () {
                 if (!detailController){
                     detailController = this;
+                    detailController._busyDialog = new sap.m.BusyDialog({
+                        text: "Please wait"
+                    });
                 }
             },
             titleFormatter: function (sFirstName, sLastName){
@@ -29,10 +32,72 @@ sap.ui.define([
                 let oApp = sap.ui.getCore().byId('application-nssplitapp-display-component---App');
                 let oAppData = oApp.getModel().getData();
                 detailController.showDialog(oAppData.selectedData, 'Edit', function(e){
+
+                    detailController._busyDialog.open();
+
+                    let oDialog = e.getSource().getParent();
                     let oEditedData = e.getSource().getParent().getModel().getData();
+                    oDialog.close();
 
                     //get the edited data and send it as a patch
-                    console.log(oEditedData);
+                    let dateFormatter = (sVal) => {
+                        let oDate = new Date(sVal);
+                        let year = oDate.getFullYear();
+                        let month = oDate.getMonth() + 1;
+                        let day = oDate.getDate();
+
+                        if (month < 10){
+                            month = "0" + month.toString();
+                        }
+
+                        if (day < 10){
+                            day = "0" + day.toString();
+                        }
+
+                        return year + "-" + month + "-" + day;
+                    }
+
+                    let oData = {
+                        "PersonId" : oEditedData.PersonId,
+                        "FirstName": oEditedData.FirstName,
+                        "LastName": oEditedData.LastName,
+                        "StartDate": dateFormatter(oEditedData.StartDate),
+                        "EndDate": dateFormatter(oEditedData.EndDate),
+                        "HeightCm":  parseInt(oEditedData.HeightCm),
+                        "ImageBase64": ""
+                    }
+
+                    let sUrl = "/odata/v4/peopleservice/PeopleSet('" + oEditedData.PersonId + "')";
+                    let sMethod = 'PUT';
+                    let oHeaders = {
+                        'Content-Type' : 'application/json',
+                        'externalcaller' : 'true'
+                    };
+
+                    $.ajax({
+                        url : sUrl,
+                        method: 'PUT',
+                        dataType: 'text',
+                        data: JSON.stringify(oData),
+                        headers: oHeaders,
+                        success:function(){
+
+                            const oApp = sap.ui.getCore().byId("application-nssplitapp-display-component---App");
+                            const oAppController = oApp.getController();
+                            oAppController.readData().then((results)=>{
+                                oAppController.bindAppData(results);
+                                setTimeout(function(){
+                                    detailController._busyDialog.close();
+                                }, 1000)
+                            })
+                        },
+                        error:function(e){
+                            console.log(e);
+                            setTimeout(function(){
+                                detailController._busyDialog.close();
+                            }, 1000)
+                        }
+                    })
                 })
             },
             createUser: function (e) {
@@ -52,8 +117,11 @@ sap.ui.define([
                 }
 
                 detailController.showDialog(oData, 'Create', function(e){
+                    detailController._busyDialog.open();
+
                     let oDialog = e.getSource().getParent();
                     let oDialogData = oDialog.getModel().getData();
+                    oDialog.close();
                     
                     //clean up data
                     let oFormattedData = {};
@@ -87,21 +155,49 @@ sap.ui.define([
                     let sMethod = 'POST';
                     let oHeaders = {'Content-Type' : 'application/json'};
                     detailController.externalCall(sUrl, sMethod, oFormattedData, oHeaders).then(function(result){
-                        //if successfull, close dialog
-                        oDialog.close();
 
                         const oApp = sap.ui.getCore().byId("application-nssplitapp-display-component---App");
                         const oAppController = oApp.getController();
                         oAppController.readData().then((results)=>{
                             oAppController.bindAppData(results);
+                            setTimeout(function(){
+                                detailController._busyDialog.close();
+                            }, 1000)
+                            
                         })
                     }).catch(function(error){
-                        console.log(error)
+                        setTimeout(function(){
+                            detailController._busyDialog.close();
+                        }, 1000)
+                        console.log(error);
                     })
                 });
             },
             deleteUser: function (e) {
-                console.log(e);
+                detailController._busyDialog.open();
+
+                let oApp = sap.ui.getCore().byId('application-nssplitapp-display-component---App');
+                let oAppData = oApp.getModel().getData();
+                let oSelectedData = oAppData.selectedData;
+                let sUrl = "/odata/v4/peopleservice/PeopleSet('" + oSelectedData.PersonId + "')";
+                let sMethod = 'DELETE';
+                let oHeaders = {'externalcaller' : 'true'};
+
+                detailController.externalCall(sUrl, sMethod, null, oHeaders).then(function(result){
+                    const oApp = sap.ui.getCore().byId("application-nssplitapp-display-component---App");
+                    const oAppController = oApp.getController();
+                    oAppController.readData().then((results)=>{
+                        oAppController.bindAppData(results);
+                        setTimeout(function(){
+                            detailController._busyDialog.close();
+                        }, 1000)
+                    })
+                }).catch(function(error){
+                    setTimeout(function(){
+                        detailController._busyDialog.close();
+                    }, 1000)
+                    console.log(error)
+                })
             },
             showDialog: function (data, actionText, actionFn) {
                 let oDataCopy = $.extend(true,{},data);
