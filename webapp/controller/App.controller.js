@@ -14,6 +14,7 @@ sap.ui.define(
         onInit: function() {
           if (!appController){
             appController = this;
+            appController._baseUri = this.getOwnerComponent().getManifestObject()._oBaseUri._string;
           }
         },
         onBeforeRendering: function () {
@@ -45,13 +46,14 @@ sap.ui.define(
           }
 
           //bind splitapp to the model
-          let oApp = sap.ui.getCore().byId('application-nssplitapp-display-component---App');
+          let oComponent = this.getOwnerComponent();
+          let oApp = oComponent.byId('App');
           oApp.setModel(mainModel)
         },
         
         readData: function(){
           
-          const sUrl = "/odata/v4/peopleservice/PeopleSet?$format=json";
+          const sUrl = appController._baseUri + "odata/v4/peopleservice/PeopleSet?$format=json";
           const sMethod = 'GET';
 
           return new Promise((resolve, reject) => {

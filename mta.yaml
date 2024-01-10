@@ -1,0 +1,112 @@
+_schema-version: "3.1"
+ID: splitapp
+description: A Fiori application.
+version: 0.0.1
+modules:
+- name: splitapp-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: splitapp-html5-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - nssplitapp.zip
+      name: nssplitapp
+      target-path: resources/
+
+- name: splitapp-destinations
+  type: com.sap.application.content
+  requires:
+  - name: splitapp-uaa
+    parameters:
+      service-key:
+        name: splitapp-uaa-key
+  - name: splitapp-html5-repo-host
+    parameters:
+      service-key:
+        name: splitapp-html5-repo-host-key
+  - name: splitapp-destination
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: splitapp-html5-repo-host
+          ServiceInstanceName: splitapp-html5-repo-host
+          ServiceKeyName: splitapp-html5-repo-host-key
+          sap.cloud.service: splitapp.service
+        - Authentication: OAuth2UserTokenExchange
+          Name: splitapp-uaa
+          ServiceInstanceName: splitapp-uaa
+          ServiceKeyName: splitapp-uaa-key
+          sap.cloud.service: splitapp.service
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+
+- name: nssplitapp
+  type: html5
+  path: .
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+
+resources:
+
+- name: splitapp-destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+    service: destination
+    service-plan: lite
+
+- name: splitapp-connectivity
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: connectivity
+    service-plan: lite
+
+- name: splitapp-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+    
+- name: splitapp-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: splitapp-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npx cds build --production

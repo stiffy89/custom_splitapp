@@ -9,6 +9,8 @@ sap.ui.define([
         "use strict";
 
         let detailController;
+        let ownerComponent;
+        let appController;
         let detailPageModel;
         let detailPage;
 
@@ -16,6 +18,8 @@ sap.ui.define([
             onInit: function () {
                 if (!detailController){
                     detailController = this;
+                    ownerComponent = this.getOwnerComponent();
+                    appController = ownerComponent.byId('App').getController();
                     detailController._busyDialog = new sap.m.BusyDialog({
                         text: "Please wait"
                     });
@@ -29,7 +33,7 @@ sap.ui.define([
             },
             editUser: function (e) {
                 //get user data
-                let oApp = sap.ui.getCore().byId('application-nssplitapp-display-component---App');
+                let oApp = appController.getView();
                 let oAppData = oApp.getModel().getData();
                 detailController.showDialog(oAppData.selectedData, 'Edit', function(e){
 
@@ -67,7 +71,7 @@ sap.ui.define([
                         "ImageBase64": ""
                     }
 
-                    let sUrl = "/odata/v4/peopleservice/PeopleSet('" + oEditedData.PersonId + "')";
+                    let sUrl = appController._baseUri + "odata/v4/peopleservice/PeopleSet('" + oEditedData.PersonId + "')";
                     let sMethod = 'PUT';
                     let oHeaders = {
                         'Content-Type' : 'application/json',
@@ -76,16 +80,13 @@ sap.ui.define([
 
                     $.ajax({
                         url : sUrl,
-                        method: 'PUT',
+                        method: sMethod,
                         dataType: 'text',
                         data: JSON.stringify(oData),
                         headers: oHeaders,
                         success:function(){
-
-                            const oApp = sap.ui.getCore().byId("application-nssplitapp-display-component---App");
-                            const oAppController = oApp.getController();
-                            oAppController.readData().then((results)=>{
-                                oAppController.bindAppData(results);
+                            appController.readData().then((results)=>{
+                                appController.bindAppData(results);
                                 setTimeout(function(){
                                     detailController._busyDialog.close();
                                 }, 1000)
@@ -151,15 +152,12 @@ sap.ui.define([
                     oFormattedData.ImageBase64 = "";
 
 
-                    let sUrl = "/odata/v4/peopleservice/PeopleSet";
+                    let sUrl = appController._baseUri + "odata/v4/peopleservice/PeopleSet";
                     let sMethod = 'POST';
                     let oHeaders = {'Content-Type' : 'application/json'};
                     detailController.externalCall(sUrl, sMethod, oFormattedData, oHeaders).then(function(result){
-
-                        const oApp = sap.ui.getCore().byId("application-nssplitapp-display-component---App");
-                        const oAppController = oApp.getController();
-                        oAppController.readData().then((results)=>{
-                            oAppController.bindAppData(results);
+                        appController.readData().then((results)=>{
+                            appController.bindAppData(results);
                             setTimeout(function(){
                                 detailController._busyDialog.close();
                             }, 1000)
@@ -176,18 +174,16 @@ sap.ui.define([
             deleteUser: function (e) {
                 detailController._busyDialog.open();
 
-                let oApp = sap.ui.getCore().byId('application-nssplitapp-display-component---App');
+                let oApp = appController.getView();
                 let oAppData = oApp.getModel().getData();
                 let oSelectedData = oAppData.selectedData;
-                let sUrl = "/odata/v4/peopleservice/PeopleSet('" + oSelectedData.PersonId + "')";
+                let sUrl = appController._baseUri + "odata/v4/peopleservice/PeopleSet('" + oSelectedData.PersonId + "')";
                 let sMethod = 'DELETE';
                 let oHeaders = {'externalcaller' : 'true'};
 
                 detailController.externalCall(sUrl, sMethod, null, oHeaders).then(function(result){
-                    const oApp = sap.ui.getCore().byId("application-nssplitapp-display-component---App");
-                    const oAppController = oApp.getController();
-                    oAppController.readData().then((results)=>{
-                        oAppController.bindAppData(results);
+                    appController.readData().then((results)=>{
+                        appController.bindAppData(results);
                         setTimeout(function(){
                             detailController._busyDialog.close();
                         }, 1000)
