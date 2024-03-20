@@ -1,3 +1,4 @@
+
 sap.ui.define(
     [
         "sap/ui/core/mvc/Controller"
@@ -12,6 +13,7 @@ sap.ui.define(
 
       return BaseController.extend("ns.splitapp.controller.App", {
         onInit: function() {
+
           if (!appController){
             appController = this;
             appController._baseUri = this.getOwnerComponent().getManifestObject()._oBaseUri._string;
@@ -21,7 +23,9 @@ sap.ui.define(
           
           appController.readData().then(function(results){
             appController.bindAppData(results);
-          })
+          });
+
+         
         },
 
         bindAppData: function (results) {
@@ -48,8 +52,12 @@ sap.ui.define(
           //bind splitapp to the model
           let oComponent = this.getOwnerComponent();
           let oApp = oComponent.byId('App');
-          oApp.setModel(mainModel)
+          oApp.setModel(mainModel);
+
+          
         },
+
+        
         
         readData: function(){
           

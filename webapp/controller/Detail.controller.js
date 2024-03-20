@@ -286,6 +286,25 @@ sap.ui.define([
 
                     $.ajax(oAjaxObj);
                 });
+            },
+
+            renderDemoTable : function () {
+                console.log('rendering demo tabulator table');
+                
+                let oTable = new Tabulator('#demoTable', {
+                  
+                  pagination: 'local',
+                  paginationSize: 20,
+                  data: [],
+                  layout: "fitColumns",
+                  columns: [ //Define Table Columns
+                    { title: "Carrier ID", field: "carrid" },
+                    { title: "Price", field: "PRICE" },
+                    { title: "Currency", field: "CURRENCY" },
+                    { title: "Plane", field: "PLANETYPE" },
+                    { title: "Distance", field: "flightDetails.distance" }
+                  ]
+                });
             }
         });
     });

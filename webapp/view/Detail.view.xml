@@ -3,6 +3,7 @@
     xmlns="sap.m"
     xmlns:uxap="sap.uxap"
     xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
     >
     <Page id="detailPage" title="Employee Details">
         <content>
@@ -49,6 +50,10 @@
                                             <Text text="{/selectedData/EndDateDisp}"/>
                                         </form:content>
                                     </form:SimpleForm>
+                                    <core:HTML
+                                        content='&lt;div id=&quot;demoTable&quot;&gt;&lt;div&gt;'
+                                        afterRendering='renderDemoTable'
+                                    />
                                 </uxap:blocks>
                             </uxap:ObjectPageSubSection>
                         </uxap:subSections>
