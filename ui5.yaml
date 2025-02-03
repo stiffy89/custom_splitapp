@@ -18,6 +18,8 @@ server:
         backend:
             - path: /odata/v4/peopleservice
               destination: people_dest
+            - path: /Products
+              destination: Northwind
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

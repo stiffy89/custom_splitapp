@@ -1,3 +1,10 @@
+/* jQuery.sap.registerModulePath("threeJS", { url: "https://threejs.org/build/" });
+jQuery.sap.includeScript(sap.ui.resource("threeJS", "three.module.js"));
+
+jQuery.sap.registerModulePath("threeAddons", "https://threejs.org/examples/jsm/");
+jQuery.sap.includeScript(sap.ui.resource("threeAddons", "loaders/GLTFLoader.js"));
+jQuery.sap.includeScript(sap.ui.resource("threeAddons", "loaders/RGBELoader.js")); */
+
 
 sap.ui.define(
     [
@@ -21,6 +28,8 @@ sap.ui.define(
         },
         onBeforeRendering: function () {
           
+          appController.readNorthwindData();
+
           appController.readData().then(function(results){
             appController.bindAppData(results);
           });
@@ -57,7 +66,24 @@ sap.ui.define(
           
         },
 
-        
+        readNorthwindData : function () {
+          const sUrl = appController._baseUri + "Products";
+          const sMethod = 'GET';
+
+          return new Promise((resolve, reject) => {
+            $.ajax({
+                url: sUrl,
+                method: sMethod,
+                async: false,
+                success: function(result, status, xhr) {
+                    resolve(result);
+                },
+                error: function(xhr, status, error) {
+                    reject(error);
+                }
+            })
+          })
+        },
         
         readData: function(){
           

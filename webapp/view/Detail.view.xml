@@ -7,6 +7,7 @@
     >
     <Page id="detailPage" title="Employee Details">
         <content>
+            
             <uxap:ObjectPageLayout>
                 <uxap:headerTitle>
                     <uxap:ObjectPageHeader 
@@ -50,16 +51,22 @@
                                             <Text text="{/selectedData/EndDateDisp}"/>
                                         </form:content>
                                     </form:SimpleForm>
-                                    <core:HTML
-                                        content='&lt;div id=&quot;demoTable&quot;&gt;&lt;div&gt;'
-                                        afterRendering='renderDemoTable'
-                                    />
+                                   
                                 </uxap:blocks>
                             </uxap:ObjectPageSubSection>
                         </uxap:subSections>
                     </uxap:ObjectPageSection>
                 </uxap:sections>
             </uxap:ObjectPageLayout>
+
+            <core:HTML
+                content='&lt;div id=&quot;demoTable&quot;&gt;&lt;div&gt;'
+                afterRendering='renderDemoTable'
+            />
+            <core:HTML
+                content='&lt;div id=&quot;demoThree&quot;&gt;&lt;div&gt;'
+                afterRendering='renderThree'
+            />
         </content>
     </Page>
 </mvc:View>

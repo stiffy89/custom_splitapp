@@ -3,6 +3,12 @@
   "authenticationMethod": "route",
   "routes": [
     {
+      "source": "^/(.*)",
+      "target": "/$1",
+      "destination": "Northwind",
+      "authenticationType": "none"
+    },
+    {
       "source": "^.*/odata/v4/peopleservice/(.*)",
       "target": "/odata/v4/peopleservice/$1",
       "destination": "people_dest",
